@@ -1,0 +1,55 @@
+python -m diffwave models spectrogram_paths.txt
+
+for f in *.npy; do mv -- "$f" "${f%.npy}.wav.spec.npy"; done
+
+python -m diffwave /zooper2/esther.whang/mario/models /zooper2/esther.whang/mario/spectrogram
+
+#testing original
+python -m diffwave.preprocess /zooper2/esther.whang/mario/preprocss/mamma-mia.wav
+python -m diffwave /zooper2/esther.whang/mario/diffwave/models /zooper2/esther.whang/mario/resampled_dataset/combined --max_steps 50000
+
+python -m diffwave.inference --fast /zooper2/esther.whang/mario/diffwave/weights.pt /zooper2/esther.whang/mario/diffwave/audio/reference_0.wav.spec.npy -o output.wav
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/resampled_dataset/spectrogram_new/1.wav.spec.npy --output output.wav --fast /zooper2/esther.whang/mario/diffwave/weights.pt 
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/diffwave/audio/reference_0.wav.spec.npy --output output_test.wav --fast /zooper2/esther.whang/mario/diffwave/models/weights.pt 
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/resampled_dataset/spectrogram_new/1.wav.spec.npy --output output_old_model.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights-8000.pt 
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/resampled_dataset/spectrogram_new/1.wav.spec.npy --output output_10000-model.wav --fast /zooper2/esther.whang/mario/diffwave/models/weights-10000.pt 
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/diffwave/audio/reference_0.wav.spec.npy --output output_10000-model_Old_ref.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights-10000.pt 
+
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/reference_0.wav.spec.npy --output output_10000-model_Old_ref_regen.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights-10000.pt 
+
+
+tensorboard --logdir /zooper2/esther.whang/mario/diffwave/models  --host localhost --port 1237 --bind_all
+
+cp -a -r resampled_dataset/wavs ~esther.whang/public_html
+salami
+
+steps:
+regenerate the spectrograms
+update the transcript so it only have relevant lines
+update the naming of the files
+run and compare outputs
+
+
+python -m diffwave /zooper2/esther.whang/mario/models_old /zooper2/esther.whang/mario/resampled_dataset/combined
+
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/test_dataset/mario2.wav.spec.npy --output /zooper2/esther.whang/mario/test_dataset/model_iter_compare/mario2_output_25000.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights.pt 
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/test_dataset/pratt12.wav.spec.npy --output /zooper2/esther.whang/mario/test_dataset/model_iter_compare/mario2_output_15000.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights-15000.pt 
+
+python -m voicefixer --infile /zooper2/esther.whang/mario/test_dataset/wavs/mario2.wav --outfile /zooper2/esther.whang/mario/test_dataset/wavs/mario2_voicefixed.wav
+
+
+
+python -m diffwave.preprocess /zooper2/esther.whang/mario/preprocss
+
+show_spectrogram("out"+str(second)+"_"+str(rate)+".wav")
+
+python -m diffwave.inference --spectrogram_path /zooper2/esther.whang/mario/test_dataset/pratt12.wav.spec.npy --output /zooper2/esther.whang/mario/test_dataset/model_iter_compare/pratt12_output-25000.wav --fast /zooper2/esther.whang/mario/diffwave/models_old/weights-25000.pt 
+
